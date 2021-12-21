@@ -1,0 +1,2 @@
+
+Workload setup-sample-keycloak has been deployed

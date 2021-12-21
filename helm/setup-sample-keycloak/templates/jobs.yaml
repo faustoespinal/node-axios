@@ -1,0 +1,39 @@
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sdtup-sample-keycloak
+  labels:
+    app: sdtup-sample-keycloak
+    sourceapp: setup-sample-keycloak
+    sourceversion: 1.0.0
+    sourceappversion: 1.0.0
+spec:
+  backoffLimit: {{ .Values.sdtup_sample_keycloak.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        app: sdtup-sample-keycloak
+    spec:
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: sdtup-sample-keycloak
+      {{- end }}
+      restartPolicy: Never
+      containers:
+      - name: sdtup-sample-keycloak
+        image: {{ .Values.sdtup_sample_keycloak.image.repository }}:{{ .Values.sdtup_sample_keycloak.image.tag }}
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        env:
+        - name: INIT_THE_MESSAGE
+          value: "Hello there again"
+        - name: mykey
+          valueFrom:
+            configMapKeyRef:
+              name: cmd-script
+              key: mykey
+        securityContext:
+          runAsUser: 1000
+        {{ if .Values.sdtup_sample_keycloak.resources }}
+        resources: {{- toYaml .Values.sdtup_sample_keycloak.resources | nindent 8 }}
+        {{ end }}

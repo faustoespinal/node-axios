@@ -1,0 +1,20 @@
+apiVersion: helmboot/beta/v1
+type: job  
+name: setup-sample-keycloak
+description: "Runs the node-axios image in a kubernetes job"
+version: 1.0.0
+appVersion: 1.0.0
+spec:
+  jobs:
+    - sdtup-sample-keycloak:
+        image: faustoespinal/node-axios
+        tag: latest
+        configmaps:
+          - cmd-script
+        env:
+          - name: INIT_THE_MESSAGE
+            value: "Hello there again"
+  configmaps:
+    - cmd-script:
+        data:
+          - mykey: myvalue
