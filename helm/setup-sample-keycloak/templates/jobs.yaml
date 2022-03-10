@@ -20,18 +20,27 @@ spec:
       serviceAccountName: sdtup-sample-keycloak
       {{- end }}
       restartPolicy: Never
+      volumes:
+        - name: setup-script
+          configMap:
+            name: cmd-script
       containers:
       - name: sdtup-sample-keycloak
         image: {{ .Values.sdtup_sample_keycloak.image.repository }}:{{ .Values.sdtup_sample_keycloak.image.tag }}
         imagePullPolicy: {{ .Values.pullPolicy }}
+        volumeMounts:
+        - name: setup-script
+          mountPath: /app/src/cmd.js
+          subPath: cmd.js
         env:
-        - name: INIT_THE_MESSAGE
-          value: "Hello there again"
-        - name: mykey
-          valueFrom:
-            configMapKeyRef:
-              name: cmd-script
-              key: mykey
+        - name: KEYCLOAK_SVC
+          value: "md-keycloak.md-security"
+        - name: KEYCLOAK_PORT
+          value: "443"
+        - name: KEYCLOAK_ADMIN_USR
+          value: "user"
+        - name: KEYCLOAK_ADMIN_PWD
+          value: "mioKarofa91Mia"
         securityContext:
           runAsUser: 1000
         {{ if .Values.sdtup_sample_keycloak.resources }}
